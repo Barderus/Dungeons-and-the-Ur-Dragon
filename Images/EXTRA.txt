@@ -1,0 +1,42 @@
+EXTRA:
+Warrior 2
+Hobbit
+Floating Wizard
+
+Opponents
+Bringer of Death -- Wraith(?)
+Dark Fantasy Boss -- Troll (?)
+Evil Wizard Lady -- Necromancer
+Dark Wizard -- Lich
+Goblin -- Goblin
+Skeleton -- Skeleton Warrior
+Slime -- Slime
+Hydra -- Hydra
+Orc -- Orc
+Ghoul - Ghoul
+Wraith
+Troll -- Troll
+Fire Worm -- Fire Worm
+
+Bosses
+Dragon -- Dragon
+Demon -- Demon / Demon 2
+Necromancer -- Dark Wizard
+
+
+Full Armor Knight  -- Gimli
+Warrior Cape  -- Aragorn
+Warrior Woman -- Eowyn
+Blue Witch -- Aerith
+Fire Wizard -- Snape
+Mage Guardian -- Gandalf
+
+
+Allies
+King -- Eldric the Warrior
+Moonstone Keeper -- Faye the Mystic
+Night Knight -- Thorne the Dark Blade
+Paladin -- Garrick the Guardian
+Purple Wizard -- Zarek the Black Mage
+Wizard Paack -- Healer
+Kobold -- Kobold

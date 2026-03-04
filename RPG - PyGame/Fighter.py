@@ -4,21 +4,26 @@ pygame.init()
 
 # fighter class
 class Fighter:
-    def __init__(self, name, hp, mp, atk, df, speed, mgk_atk, mgk_def, spells, xcoord, ycoord, boss=False):
+    def __init__(self, name, hp, mp, atk, df, speed, mgk_atk, mgk_def, spells, xcoord, ycoord, boss=False, flip=False):
         self.name = name
         self.max_hp = hp
+        self.maxhp = hp
         self.hp = hp
         self.max_mp = mp
+        self.maxmp = mp
         self.strength = atk
+        self.atk = atk
         self.mp = mp
         self.df = df
         self.speed = speed
         self.mgk_atk = mgk_atk
         self.mgk_def = mgk_def
-        self.spells = spells
+        self.spells = spells if spells else []
+        self.spell_weights = {spell: 1 for spell in self.spells}
         self.xcoord = xcoord
         self.ycoord = ycoord
         self.boss = boss
+        self.flip = flip
         self.alive = True
         self.animation_list = []
         self.action = 0  # 0:idle, 1:attack, 2:hurt, 3:dead
@@ -27,13 +32,13 @@ class Fighter:
         self.update_time = pygame.time.get_ticks()
 
         # Common animation settings
-        scale = 2
+        scale = 1.2 if boss else 1.0
 
         # Load animations with validation
         animation_types = ['Idle', 'Attack', 'Hurt', 'Death']
         for action in animation_types:
             try:
-                frames = SpriteSheet.get_character_sprite(self.name, action, scale)
+                frames = SpriteSheet.get_character_sprite(self.name, action, scale, self.flip)
                 if not frames:
                     print(f"Warning: No frames found for {self.name}'s {action} animation")
                     self.animation_list.append([])
@@ -107,12 +112,15 @@ class Fighter:
         if self.current_frame:
             surface.blit(self.current_frame, (self.xcoord, self.ycoord))
 
-    def clone(self):
+    def cast_magic(self, target, magic):
+        magic.apply(caster=self, target=target)
+
+    def clone(self, flip=None):
         return Fighter(
             self.name,
             self.max_hp,
             self.max_mp,
-            self.strength,
+            self.atk,
             self.df,
             self.speed,
             self.mgk_atk,
@@ -121,4 +129,8 @@ class Fighter:
             self.xcoord,
             self.ycoord,
             self.boss,
+            self.flip if flip is None else flip,
         )
+
+    def create_fighter(self, flip=None):
+        return self.clone(flip=flip)

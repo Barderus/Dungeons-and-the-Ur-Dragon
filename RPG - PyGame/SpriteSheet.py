@@ -47,7 +47,9 @@ class SpriteSheet:
             for image_file in images:
                 img_path = os.path.join(self.images_folder, image_file)
                 try:
-                    img = pygame.image.load(img_path).convert_alpha()
+                    img = pygame.image.load(img_path)
+                    if pygame.display.get_surface() is not None:
+                        img = img.convert_alpha()
                     width, height = img.get_size()
                     img = pygame.transform.scale(img, (int(width * scale), int(height * scale)))
                     img.set_colorkey(color)

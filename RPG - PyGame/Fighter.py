@@ -28,11 +28,13 @@ class Fighter:
         self.animation_list = []
         self.action = 0  # 0:idle, 1:attack, 2:hurt, 3:dead
         self.frame_index = 0
-        self.animation_speed = 0.2  # Adjust for slower/faster animations
+        self.animation_speed = 1  # Advance frames faster for snappier animations
         self.update_time = pygame.time.get_ticks()
+        self.render_width = 0
+        self.render_height = 0
 
         # Common animation settings
-        scale = 1.2 if boss else 1.0
+        scale = 1.8 if boss else 1.4
 
         # Load animations with validation
         animation_types = ['Idle', 'Attack', 'Hurt', 'Death']
@@ -49,6 +51,7 @@ class Fighter:
                 self.animation_list.append([])
 
         self._apply_animation_fallbacks()
+        self._set_render_bounds()
 
         # Validate self.action and self.frame_index
         if self.action >= len(self.animation_list):
@@ -82,6 +85,14 @@ class Fighter:
                 self.animation_list[index] = idle_frames
                 print(f"Warning: Falling back to Idle frames for {self.name}'s {label} animation.")
 
+    def _set_render_bounds(self):
+        frames = [frame for animation in self.animation_list for frame in animation]
+        if not frames:
+            return
+
+        self.render_width = max(frame.get_width() for frame in frames)
+        self.render_height = max(frame.get_height() for frame in frames)
+
     def update(self):
         """
         Update the current animation frame.
@@ -90,7 +101,7 @@ class Fighter:
             return
 
         # Update animation
-        animation_cooldown = 100  # milliseconds
+        animation_cooldown = 50  # milliseconds
         self.current_frame = self.animation_list[self.action][int(self.frame_index)]
         
         # Check if enough time has passed since the last update
@@ -110,7 +121,9 @@ class Fighter:
         Draw the current animation frame onto the given surface.
         """
         if self.current_frame:
-            surface.blit(self.current_frame, (self.xcoord, self.ycoord))
+            draw_x = self.xcoord + max(0, (self.render_width - self.current_frame.get_width()) // 2)
+            draw_y = self.ycoord + max(0, self.render_height - self.current_frame.get_height())
+            surface.blit(self.current_frame, (draw_x, draw_y))
 
     def cast_magic(self, target, magic):
         magic.apply(caster=self, target=target)

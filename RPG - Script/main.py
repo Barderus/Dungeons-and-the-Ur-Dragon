@@ -45,11 +45,11 @@ def play_sound():
         time.sleep(5)
 
 def target_list(enemy_team):
-    print("\n\tChoose a target: \n"
-          f"\t- {enemy_team[0].name}\n "
-          f"\t- {enemy_team[1].name}\n"
-          f"\t- {enemy_team[2].name}\n "
-          f"\t- {enemy_team[3].name}\n ")
+    print("\n\tChoose a target: ")
+    for enemy in enemy_team:
+        if enemy.hp > 0:
+            print(f"\t- {enemy.name}")
+    print()
 
 
 def treasure_table(main_team):
@@ -299,10 +299,10 @@ def enemy_attack(ally_team, enemy, enemies_team):
         target_ally = low_hp_ally
     else:
         # Select from weaker defense and stronger attack allies
-        random_low_mgk = random.choice(sorted_by_mgk_def)
-        random_high_atk = random.choice(sorted_by_atk)
+        low_mgk_ally = sorted_by_mgk_def[0]
+        high_atk_ally = sorted_by_atk[0]
 
-        ally_list = [random_low_mgk] if random_low_mgk == random_high_atk else [random_low_mgk, random_high_atk]
+        ally_list = [low_mgk_ally] if low_mgk_ally == high_atk_ally else [low_mgk_ally, high_atk_ally]
         target_ally = random.choice(ally_list)
 
     enemy.attacks(target_ally)
@@ -316,7 +316,7 @@ def prompt():
     """
         This function displays a welcoming message and prompts the user for their characters.
     """
-    print(f"""
+    print(fr"""
                                 {bcolors.YELLOW
     }{bcolors.BOLD}Dungeons and the Ur-Dragon{bcolors.ENDC}
                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -469,7 +469,7 @@ def battle(ally_team, enemies_team):
 
 def main():
 
-    thread = Thread(target=play_sound)
+    thread = Thread(target=play_sound, daemon=True)
     thread.start()
 
     # Generate allies, enemies

@@ -5,7 +5,7 @@ from threading import Thread
 from collections import deque
 
 from Colors import bcolors
-from characters import *
+from characters import all_items, allies, avatars, bosses, enemies
 
 
 def play_sound():
@@ -228,6 +228,10 @@ def select_enemy_spell(enemy):
     return chosen_spell
 
 
+def get_spell_by_name(caster, spell_name):
+    return next((spell for spell in caster.spells if spell.name == spell_name), None)
+
+
 def enemy_attack(ally_team, enemy, enemies_team):
     # Select only alive allies
     alive_allies = [ally for ally in ally_team if ally.hp > 0]
@@ -247,27 +251,22 @@ def enemy_attack(ally_team, enemy, enemies_team):
 
     # Boss logic for AoE attack if any ally is at full HP
     if enemy.boss:
+        boss_aoe_spell_name = {
+            "Lich": "Meteor",
+            "Ur-Dragon": "Breath of Fire",
+            "Orcus": "Pandemonium",
+        }.get(enemy.name)
+
         if any(ally.hp == ally.maxhp for ally in ally_team):  # Check if any ally is at full HP
-            if enemy.name == "Lich":
-                meteor_spell = next((spell for spell in enemy.spells if spell.name == "Meteor"), None)
-                if meteor_spell:
-                    enemy.cast_magic(ally_team, meteor_spell)
-                    return  # After casting AoE, return to prevent further attacks
-            elif enemy.name == "Ur-Dragon":
-                firaga_spell = next((spell for spell in enemy.spells if spell.name == "Breath of Fire"), None)
-                if firaga_spell:
-                    enemy.cast_magic(ally_team, firaga_spell)
-                    return  # After casting AoE, return to prevent further attacks
-            elif enemy.name == "Orcus":
-                hell_spell = next((spell for spell in enemy.spells if spell.name == "Pandemonium"), None)
-                if hell_spell:
-                    enemy.cast_magic(ally_team, hell_spell)
-                    return  # After casting AoE, return to prevent further attacks
+            aoe_spell = get_spell_by_name(enemy, boss_aoe_spell_name) if boss_aoe_spell_name else None
+            if aoe_spell:
+                enemy.cast_magic(ally_team, aoe_spell)
+                return  # After casting AoE, return to prevent further attacks
 
         # Revive, Heal or Attack Logic (after AoE check)
         for char in enemies_team:
             if char.hp <= 0:
-                revive_spell = next((spell for spell in enemy.spells if spell.name == "Revive"), None)
+                revive_spell = get_spell_by_name(enemy, "Revive")
                 if revive_spell:
                     enemy.cast_magic(char, revive_spell)
                 else:
@@ -276,7 +275,7 @@ def enemy_attack(ally_team, enemy, enemies_team):
                         chosen_item.use_item(char)
 
             elif char.hp < (char.maxhp // 2):
-                curaga_spell = next((spell for spell in enemy.spells if spell.name == "Curaga"), None)
+                curaga_spell = get_spell_by_name(enemy, "Curaga")
                 if curaga_spell:
                     enemy.cast_magic(char, curaga_spell)
                 else:

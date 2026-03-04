@@ -15,7 +15,7 @@ class Magic:
 
     def check_mp(self, caster):
         if caster.mp < self.mp:
-            print(f"\t\t{bcolors.YELLOW}{bcolors.BOLD}{caster.name} doesn't have enough MP to cast {self.name}. {caster.name} is stunned.{bcolors.ENDC}")
+            print(f"{caster.name} doesn't have enough MP to cast {self.name}.")
             return False
         caster.mp -= self.mp
         return True
@@ -34,20 +34,19 @@ class Magic:
                 is_critical = random.random() < critical_chance
                 if is_critical:
                     magic_dmg *= critical_multiplier  # Apply critical damage multiplier
-                    print(bcolors.BOLD + bcolors.BLUE + "Arcane Surge! " + bcolors.ENDC)
+                    print("Arcane Surge!")
 
                 if self.name == "Flare":
                     rand_target = random.choice(target)
                     ttl_dmg = (magic_dmg - rand_target.mgk_def)
                     rand_target.hp -= ttl_dmg
                     for char in target:
-                        print(f"Stats before flare: {char.atk}, {char.df}, {char.speed}, {char.mgk_atk}")
                         char.atk -= 15
-                        char.df =- 15
-                        char.speed =- 15
+                        char.strength = char.atk
+                        char.df -= 15
+                        char.speed -= 15
                         char.mgk_atk -= 15
                         char.mgk_def -= 15
-                        print(f"Stats after flare: {char.atk}, {char.df}, {char.speed}, {char.mgk_atk}")
 
                     print(f"{caster.name} casts {self.name} on {rand_target.name} dealing {ttl_dmg} damage. All enemies got their stats reduced.")
 
@@ -55,7 +54,7 @@ class Magic:
                     char.hp -= magic_dmg
                     if char.hp <= 0:
                         char.hp = 0
-                print(f"{caster.name} casted {self.name} on all enemies dealing {bcolors.RED}{bcolors.BOLD}{magic_dmg}{bcolors.ENDC} points of damage.")
+                print(f"{caster.name} casts {self.name} on all enemies dealing {magic_dmg} points of damage.")
                 return
 
             magic_dmg = (caster.mgk_atk + self.dmg) - target.mgk_def
@@ -63,7 +62,7 @@ class Magic:
             is_critical = random.random() < critical_chance
             if is_critical:
                 magic_dmg *= critical_multiplier  # Apply critical damage multiplier
-                print(bcolors.BOLD + bcolors.BLUE + "Arcane Surge! " + bcolors.ENDC)
+                print("Arcane Surge!")
 
             dodge_messages = [
                 f"{target.name} swiftly dodges the attack!",
@@ -100,15 +99,15 @@ class Magic:
 
             # Check if target was defeated
             if target.hp == 0:
-                print(f"{caster.name} casts {self.name} on {target.name} dealing {bcolors.RED}{bcolors.BOLD}{magic_dmg}{bcolors.ENDC} points of damage")
+                print(f"{caster.name} casts {self.name} on {target.name} dealing {magic_dmg} points of damage")
                 print(random.choice(kill_messages))
             else:
-                print(f"{caster.name} casts {self.name} on {target.name}, dealing {bcolors.RED}{bcolors.BOLD}{int(magic_dmg)}{bcolors.ENDC} damage.")
+                print(f"{caster.name} casts {self.name} on {target.name}, dealing {int(magic_dmg)} damage.")
 
         elif self.effect_type == "healing":
             heal = self.heal + caster.mgk_atk
             target.hp = min(target.maxhp, target.hp + heal)
-            print(f"{caster.name} heals {target.name} for {bcolors.GREEN}{bcolors.BOLD}{int(heal)}{bcolors.ENDC} HP.")
+            print(f"{caster.name} heals {target.name} for {int(heal)} HP.")
 
         elif self.effect_type == "buff":
             if self.name == "Protect":
@@ -124,7 +123,7 @@ class Magic:
             print(f"{caster.name} revives {target.name}.")
 
 
-def __str__(self):
-    return (f"Name: {self.name}"
-            f"\nDamage: {self.dmg}\tMP: {self.mp}"
-            f"Description: {self.descri}")
+    def __str__(self):
+        return (f"Name: {self.name}"
+                f"\nDamage: {self.dmg}\tMP: {self.mp}"
+                f"\nDescription: {self.descri}")

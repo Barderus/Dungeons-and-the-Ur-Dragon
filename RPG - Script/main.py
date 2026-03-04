@@ -253,7 +253,7 @@ def enemy_attack(ally_team, enemy, enemies_team):
                 if meteor_spell:
                     enemy.cast_magic(ally_team, meteor_spell)
                     return  # After casting AoE, return to prevent further attacks
-            elif enemy.name == "Dragon":
+            elif enemy.name == "Ur-Dragon":
                 firaga_spell = next((spell for spell in enemy.spells if spell.name == "Breath of Fire"), None)
                 if firaga_spell:
                     enemy.cast_magic(ally_team, firaga_spell)

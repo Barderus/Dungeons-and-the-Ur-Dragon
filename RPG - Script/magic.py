@@ -43,8 +43,8 @@ class Magic:
                     for char in target:
                         print(f"Stats before flare: {char.atk}, {char.df}, {char.speed}, {char.mgk_atk}")
                         char.atk -= 15
-                        char.df =- 15
-                        char.speed =- 15
+                        char.df -= 15
+                        char.speed -= 15
                         char.mgk_atk -= 15
                         char.mgk_def -= 15
                         print(f"Stats after flare: {char.atk}, {char.df}, {char.speed}, {char.mgk_atk}")

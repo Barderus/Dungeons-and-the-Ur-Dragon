@@ -123,8 +123,7 @@ class Magic:
             target.hp += target.maxhp * 0.5
             print(f"{caster.name} revives {target.name}.")
 
-
-def __str__(self):
-    return (f"Name: {self.name}"
-            f"\nDamage: {self.dmg}\tMP: {self.mp}"
-            f"Description: {self.descri}")
+    def __str__(self):
+        return (f"Name: {self.name}"
+                f"\nDamage: {self.dmg}\tMP: {self.mp}"
+                f"\nDescription: {self.descri}")

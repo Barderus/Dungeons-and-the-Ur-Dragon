@@ -1,62 +1,68 @@
-# 🐉 Dungeons and the Ur-Dragon
+# Dungeons and the Ur-Dragon
 
-A text-based RPG battle simulator written in Python, where players can engage in strategic, turn-based combat with procedurally generated enemies and iconic characters from pop culture.
+A Python-based, turn-based RPG battle simulator inspired by classic fantasy games. Players assemble a party of characters, manage spells and inventory, and battle increasingly challenging enemies through a series of encounters.
 
----
+The project began as an exploration of **object-oriented programming and game development**, eventually expanding into combat mechanics, enemy decision-making, and an experimental graphical implementation using Pygame.
 
-##  Overview
+## Project Overview
 
-This game simulates classic RPG-style battles through a terminal-based interface. Players can create characters, cast spells, use items, and take on legendary enemies — including the mythical **Ur-Dragon**. The gameplay revolves around turn-based strategy, where thoughtful use of spells, stats, and inventory items determines victory.
+Dungeons and the Ur-Dragon is a terminal-based RPG that combines character attributes, turn-based combat, magic, consumable items, and enemy AI.
 
----
+The game features a three-room encounter structure, where players fight enemies, collect rewards, and progress toward a final boss battle.
 
-## ✨ Features
+Characters and enemies have individual attributes, including health, mana, physical and magical attack, defense, and speed.
 
-- **Character Selection**: Choose from customizable characters inspired by various pop culture universes.
-- **Spells**: Use powerful offensive, defensive, and support spells (e.g., Fire, Thunder, Meteor, Heal, Ultima).
-- **Inventory System**: Store and use items like potions and buffs during battle.
-- **Turn-Based Battle System**: Control character actions or simulate enemy AI decisions each round.
-- **Mana System**: Manage MP strategically to time attacks, buffs, and heals.
-- **Procedural Generation**: Enemies and stats are generated dynamically for each encounter.
-- **Team Composition**: Simulate full-party combat with allies, healers, and damage dealers.
+## Game Features
 
----
+### Turn-Based Combat
 
-##  Game Classes & Components
+Players control a party of characters and choose their actions during combat.
 
-- **Person Class**: Core entity for characters and enemies. Manages HP, MP, stats, available spells/items, and decision logic.
-- **Magic Class**: Defines spells, costs, and behavior (healing, buffing, damage).
-- **Inventory Class**: Manages and tracks consumable items across all characters.
-- **Items Class**: Represents usable items with effects like healing or stat buffs.
-- **Battle Class**: Handles turn order, damage application, spell effects, and battle resolution logic.
+The battle system includes:
 
----
+- Physical attacks with randomized damage and critical hits.
+- Offensive, defensive, healing, and support magic.
+- Mana management and spell costs.
+- Target selection for individual and area-of-effect abilities.
+- Consumable items that restore health, revive characters, or apply status effects.
 
-##  Skills Demonstrated
+### Enemy AI
 
-- Object-Oriented Programming (OOP)
-- Modular code organization
-- Procedural logic and combat simulations
-- State management and turn-based mechanics
-- Expandability (e.g., plug-and-play spells, enemies, items)
+Enemies use rule-based decision-making to select actions during combat.
 
----
-##  Next Steps
+Their behavior includes prioritizing vulnerable targets based on health and defensive attributes and selecting spells during encounters.
 
-This project is actively being developed into a GUI-based RPG using **Pygame**, with the following upcoming features:
+### Character & Inventory Systems
 
-- Visual sprites and character animations
-- Mouse-driven turn selection and real-time updates
-- Save/load mechanics for persistent characters and campaigns
----
-## Contributing
-Feel free to fork the repository and submit pull requests for improvements, bug fixes, or new features. Contributions are welcome!
+The game uses object-oriented components to manage individual characters, available spells, item inventories, and combat interactions.
 
----
-## License
-This project is licensed under the MIT License - see the LICENSE file for details.
+Each character maintains their own statistics and resources, while the inventory system tracks consumable items and their effects.
 
----
-## Acknowledgements
-* Inspired by classic RPG games.
-* Uses Python's object-oriented programming principles to structure the game.
+### Dungeon Progression
+
+The terminal game includes three encounters, with item rewards between battles and a final boss encounter.
+
+This introduces progression and resource management beyond individual battles.
+
+## Pygame Development
+
+Alongside the terminal version, I began experimenting with a graphical implementation using **Pygame**.
+
+The graphical prototype explores:
+
+- Character sprite rendering and animation.
+- Idle, attack, damage, and death animations.
+- Backgrounds and graphical interface elements.
+- Keyboard-controlled animation states.
+- Frame-based updates and sprite sheet handling.
+
+The Pygame implementation is an experimental prototype and does not yet include the complete combat mechanics of the terminal version.
+
+## Future Development
+
+Possible extensions include:
+
+- Integrating the terminal combat mechanics into the graphical interface.
+- Expanding enemy decision-making and combat strategies.
+- Implementing additional dungeons, encounters, and boss mechanics.
+- Adding persistent character progression and save/load functionality.

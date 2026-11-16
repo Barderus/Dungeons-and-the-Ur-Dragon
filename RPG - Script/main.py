@@ -44,23 +44,53 @@ def play_sound():
             queue_songs(songs.copy())  # Reload the songs
         time.sleep(5)
 
-def target_list(enemy_team):
-    print("\n\tChoose a target: ")
-    for enemy in enemy_team:
-        if enemy.hp > 0:
-            print(f"\t- {enemy.name}")
+def display_numbered_targets(targets, header):
+    print(f"\n\t{header}")
+    for index, target in enumerate(targets, start=1):
+        print(f"\t{index}. {target.name}")
     print()
 
 
-def treasure_table(main_team):
+def choose_numbered_option(prompt_text, options, allow_cancel=True):
+    while True:
+        choice = input(prompt_text).strip().lower()
+        if choice == "c" and allow_cancel:
+            return "c"
+        if choice.isdigit():
+            option_index = int(choice) - 1
+            if 0 <= option_index < len(options):
+                return options[option_index]
+        print(f"{bcolors.YELLOW}{bcolors.BOLD}Invalid choice. Please try again.{bcolors.ENDC}")
 
+
+def treasure_table(main_team):
     items_per_ally = 3
+    chest_contents = {}
+
     for ally in main_team:
         rewards = random.sample(all_items, items_per_ally)
+        chest_contents[ally.name] = rewards
+
+    print(f"\n{bcolors.BOLD}{bcolors.YELLOW}The chest contains:{bcolors.ENDC}")
+    for ally_name, rewards in chest_contents.items():
+        reward_names = ", ".join(reward.name for reward in rewards)
+        print(f"\t{ally_name}: {reward_names}")
+
+    for ally in main_team:
+        rewards = chest_contents[ally.name]
         for reward in rewards:
-            print(reward)
             ally.inventory.add_item(reward)  # Add item to the inventory
         print(f"{ally.name} received: {[reward.name for reward in rewards]}")
+
+
+def prompt_yes_no(prompt_text):
+    while True:
+        choice = input(prompt_text).strip().lower()
+        if choice in {"yes", "y"}:
+            return True
+        if choice in {"no", "n"}:
+            return False
+        print(f"{bcolors.YELLOW}{bcolors.BOLD}Please enter Yes/No or Y/N.{bcolors.ENDC}")
 
 
 def battle_screen(ally_team, enemy_team):
@@ -77,24 +107,17 @@ def battle_screen(ally_team, enemy_team):
 
 def attack(ally, enemy_team):
     while True:
-        target_list(enemy_team)
-        char_name = input(bcolors.RED + bcolors.BOLD + "    TARGET: " + bcolors.ENDC)
+        living_enemies = [enemy for enemy in enemy_team if enemy.hp > 0]
+        if not living_enemies:
+            return
 
-        # Find the target in the enemy team
-        target = None
-
-        if char_name == "c":
+        display_numbered_targets(living_enemies, "Choose a target:")
+        target = choose_numbered_option(
+            bcolors.RED + bcolors.BOLD + "    TARGET NUMBER: " + bcolors.ENDC,
+            living_enemies,
+        )
+        if target == "c":
             return "c"
-
-        for enemy in enemy_team:
-            if enemy.name.lower() == char_name.lower():  # Case-insensitive comparison
-                target = enemy
-                break
-
-
-        if target is None:
-            print(f"{bcolors.YELLOW}{bcolors.BOLD}Invalid target name. Please try again.{bcolors.ENDC}")
-            continue
 
         if target.hp <= 0:
             print(f"{bcolors.YELLOW}{bcolors.BOLD}{target.name} is already dead. Choose another target.{bcolors.ENDC}")
@@ -113,40 +136,49 @@ def cast_spell(ally, enemy_team, ally_team):
 
     # Display available spells
     print(f"\n{bcolors.BOLD}{bcolors.BLUE} SPELLS: {bcolors.ENDC}")
-    for spell in ally.spells:
-        print(f"Spell Name: {spell.name} | MP cost: {spell.mp} \nDescription: {spell.descri}\n")
+    for index, spell in enumerate(ally.spells, start=1):
+        print(f"{index}. {spell.name} | MP cost: {spell.mp} \nDescription: {spell.descri}\n")
 
     # Get user input for choosing a spell
-    choose_spell = input(f"\n\t{bcolors.BLUE}{bcolors.BOLD}SPELL:{bcolors.ENDC} (c to cancel): ").strip().lower()
-    if choose_spell == "c":
-        return "c"
-
-    # Find the chosen spell
-    chosen_spell = next((spell for spell in ally.spells if spell.name.lower() == choose_spell), None)
-    if not chosen_spell:
-        print("Spell not found.")
+    chosen_spell = choose_numbered_option(
+        f"\n\t{bcolors.BLUE}{bcolors.BOLD}SPELL NUMBER:{bcolors.ENDC} (c to cancel): ",
+        ally.spells,
+    )
+    if chosen_spell == "c":
         return "c"
 
     if chosen_spell.name == "Meteor" or chosen_spell.name == "Quake" or chosen_spell.name == "Ultima" or chosen_spell.name == "Flare":
         ally.cast_magic(enemy_team, chosen_spell)
         return
 
-    # Create a list of valid targets (enemies and allies)
-    all_targets = [obj for obj in enemy_team if obj.hp > 0] + [obj for obj in ally_team]
+    target_groups = {
+        "1": [obj for obj in ally_team if obj.hp > 0 or chosen_spell.effect_type == "revival"],
+        "2": [obj for obj in enemy_team if obj.hp > 0],
+    }
 
-    # Target selection loop
     while True:
-        char_name = input(bcolors.RED + bcolors.BOLD + "    TARGET: " + bcolors.ENDC).strip().lower()
+        target_group_choice = input(
+            f"\n\t{bcolors.BLUE}{bcolors.BOLD}TARGET GROUP:{bcolors.ENDC}\n"
+            "\t1. Allies\n"
+            "\t2. Enemies\n"
+            "\tChoose Group (c to cancel): "
+        ).strip().lower()
 
-        if char_name == "c":
+        if target_group_choice == "c":
             return "c"
-        # Find target by name
-        target = next((person for person in all_targets if person.name.lower() == char_name), None)
 
-        if target:
+        valid_targets = target_groups.get(target_group_choice)
+        if valid_targets:
             break
-        else:
-            print(f"\t\t{bcolors.YELLOW}{bcolors.BOLD}Invalid target. Please try again.{bcolors.ENDC}")
+        print(f"\t\t{bcolors.YELLOW}{bcolors.BOLD}Invalid target group. Please try again.{bcolors.ENDC}")
+
+    display_numbered_targets(valid_targets, "Choose a target:")
+    target = choose_numbered_option(
+        bcolors.RED + bcolors.BOLD + "    TARGET NUMBER: " + bcolors.ENDC,
+        valid_targets,
+    )
+    if target == "c":
+        return "c"
 
     ally.cast_magic(target, chosen_spell)
 
@@ -155,36 +187,27 @@ def items(ally, enemy_team, ally_team):
     print(f"\n{bcolors.BOLD}{bcolors.BLUE}INVENTORY:{bcolors.ENDC}")
 
     # Display available items with their descriptions
-    for item in ally.inventory.items.values():
-        print(f"- {item.name}: {item.description} x{item.quantity} ")
+    inventory_items = list(ally.inventory.items.values())
+    for index, item in enumerate(inventory_items, start=1):
+        print(f"{index}. {item.name}: {item.description} x{item.quantity} ")
 
-    choose_item = input(f"\n\t{bcolors.BLUE}{bcolors.BOLD}ITEM{bcolors.ENDC} (c to cancel): ").strip().lower()
-
-    if choose_item == "c":
-        return "c"
-
-    # Find the chosen item
-    chosen_item = next((item for item in ally.inventory.items.values() if item.name.lower() == choose_item), None)
-    if chosen_item is None:
-        print(f"\t{bcolors.YELLOW}{bcolors.BOLD}You don't have this item. Try again.{bcolors.ENDC}")
+    chosen_item = choose_numbered_option(
+        f"\n\t{bcolors.BLUE}{bcolors.BOLD}ITEM NUMBER{bcolors.ENDC} (c to cancel): ",
+        inventory_items,
+    )
+    if chosen_item == "c":
         return "c"
 
     # Create a list of valid targets (both allies and enemies)
     all_targets = [obj for obj in enemy_team if obj.hp > 0] + [obj for obj in ally_team]
 
-    # Target selection loop
-    while True:
-        target_name = input(bcolors.RED + bcolors.BOLD + "    TARGET: " + bcolors.ENDC).strip().lower()
-        if target_name == "c":
-            return "c"
-
-        # Find target by name
-        target = next((person for person in all_targets if person.name.lower() == target_name), None)
-
-        if target:
-            break
-        else:
-            print("\tThat's not a valid target. Please try again.")
+    display_numbered_targets(all_targets, "Choose a target:")
+    target = choose_numbered_option(
+        bcolors.RED + bcolors.BOLD + "    TARGET NUMBER: " + bcolors.ENDC,
+        all_targets,
+    )
+    if target == "c":
+        return "c"
 
     chosen_item.use_item(target)
     if chosen_item.quantity == 0:
@@ -344,26 +367,14 @@ def prompt():
     print(f"{bcolors.RED}{bcolors.BOLD}\t\t\t\t\t\tLet the quest begin!{bcolors.ENDC}")
     print(f"{bcolors.GREEN}\n\t\tChoose your hero: {bcolors.ENDC}")
 
-    # List of all the character names to be chosen from
-    avatar_names = [avatar.name for avatar in avatars.values()]
+    avatar_options = list(avatars.values())
 
     # Display the names with a dash and style, followed by the hero's description.
-    for name in avatar_names:
-        print(f"{bcolors.BOLD}\t\t- {name}{bcolors.ENDC}")
-        avatar_obj = next(avatar for avatar in avatars.values() if avatar.name == name)
+    for index, avatar_obj in enumerate(avatar_options, start=1):
+        print(f"{bcolors.BOLD}\t\t{index}. {avatar_obj.name}{bcolors.ENDC}")
         print(f"\t\t{avatar_obj.descri}\n")
 
-    # Control loop to check if the name entered by the user is valid
-    while True:
-        hero_choice = input("Enter the hero's name: ").capitalize()
-        if hero_choice in avatar_names:
-            name_to_avatar = {avatar.name: avatar for avatar in avatars.values()}
-            selected_hero = name_to_avatar[hero_choice]  # Now this is the object
-            break
-        else:
-            print(f"{bcolors.BOLD}{bcolors.YELLOW}{hero_choice}{bcolors.ENDC} is not a playable character.\n")
-
-    # Returns the name of the hero
+    selected_hero = choose_numbered_option("Enter the hero's number: ", avatar_options, allow_cancel=False)
     return selected_hero
 
 
@@ -489,9 +500,7 @@ def main():
     clear()
     battle(main_team, enemies_fight)
     print("You stumble upon an ancient, dust-covered treasure chest hidden in the corner of the room. What secrets, or dangers, might lie within?")
-    user_choice = input("Do you wish to open the chest? [Yes] [No]").lower()
-
-    if user_choice == "yes":
+    if prompt_yes_no("Do you wish to open the chest? [Yes] [No]"):
         treasure_table(main_team)
 
     for char in enemies_fight2:
@@ -501,9 +510,7 @@ def main():
     battle(main_team, enemies_fight2)
 
     print("You stumble upon an stylish, golden-covered treasure chest hidden in the corner of the room. What secrets, or dangers, might lie within?")
-    user_choice = input("Do you wish to open the chest? [Yes] [No]").lower()
-
-    if user_choice == "yes":
+    if prompt_yes_no("Do you wish to open the chest? [Yes] [No]"):
         rand_num = random.randint(1, 2)
         if rand_num == 1:
             treasure_table(main_team)

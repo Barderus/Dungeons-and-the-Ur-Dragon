@@ -41,7 +41,7 @@ class Magic:
                     ttl_dmg = (magic_dmg - rand_target.mgk_def)
                     rand_target.hp -= ttl_dmg
                     for char in target:
-                        print(f"Stats before flare: {char.atk}, {char.df}, {char.speed}, {char.mgk_atk}")
+                        #print(f"Stats before flare: {char.atk}, {char.df}, {char.speed}, {char.mgk_atk}")
                         char.atk -= 15
                         char.df -= 15
                         char.speed -= 15

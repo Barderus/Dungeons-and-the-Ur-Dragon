@@ -125,8 +125,8 @@ class Fighter:
             draw_y = self.ycoord + max(0, self.render_height - self.current_frame.get_height())
             surface.blit(self.current_frame, (draw_x, draw_y))
 
-    def cast_magic(self, target, magic):
-        magic.apply(caster=self, target=target)
+    def cast_magic(self, target, magic, spend_mp=True):
+        return magic.apply(caster=self, target=target, spend_mp=spend_mp)
 
     def clone(self, flip=None):
         return Fighter(

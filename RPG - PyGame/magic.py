@@ -20,9 +20,9 @@ class Magic:
         caster.mp -= self.mp
         return True
 
-    def apply(self, caster, target):
-        if not self.check_mp(caster):
-            return
+    def apply(self, caster, target, spend_mp=True):
+        if spend_mp and not self.check_mp(caster):
+            return False
 
         if self.effect_type == "damage":
             # Define critical hit parameters
@@ -55,7 +55,7 @@ class Magic:
                     if char.hp <= 0:
                         char.hp = 0
                 print(f"{caster.name} casts {self.name} on all enemies dealing {magic_dmg} points of damage.")
-                return
+                return True
 
             magic_dmg = (caster.mgk_atk + self.dmg) - target.mgk_def
             # Determine if a critical hit occurs
@@ -89,7 +89,7 @@ class Magic:
                 caster.hp += recovery
                 print(
                     f"{caster.name} casts {self.name} on {target.name}, dealing {int(magic_dmg)} damage. {caster.name} recovers {int(recovery)} HP.")
-                return
+                return True
 
             if self.name == "Meteor" or self.name == "Quake" or self.name == "Ultima":
                 pass
@@ -121,6 +121,8 @@ class Magic:
         elif self.effect_type == "revival" and target.hp == 0:
             target.hp += target.maxhp * 0.5
             print(f"{caster.name} revives {target.name}.")
+
+        return True
 
 
     def __str__(self):

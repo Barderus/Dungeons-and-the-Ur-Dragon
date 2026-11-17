@@ -14,6 +14,10 @@ class Items:
         self.quantity = quantity
 
     def use_item(self, target):
+        if self.quantity <= 0:
+            print(f"No {self.name} remaining.")
+            return
+
         # Apply the effect of the item on the target
         if self.effect == "heal":
             self.apply_healing(target)
@@ -25,6 +29,10 @@ class Items:
             print("Item effect is not recognized.")
 
     def apply_healing(self, target):
+        if self.name != "Phoenix Down" and target.hp <= 0:
+            print(f"{target.name} has perished in battle. They can't be healed.")
+            return
+
         match self.name:
             case "Healing Potion":
                 check_hp(target, heal=100, mp_heal=0)

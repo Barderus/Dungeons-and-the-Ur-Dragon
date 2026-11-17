@@ -19,3 +19,7 @@ Non-test/
 
 # Keep personal project guides local
 docs/
+
+# Keep terminal game saves local
+savegame.json
+savegame.tmp

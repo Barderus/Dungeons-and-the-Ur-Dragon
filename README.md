@@ -44,6 +44,10 @@ The terminal game includes three encounters, with item rewards between battles a
 
 This introduces progression and resource management beyond individual battles.
 
+### Saving and Loading
+
+The terminal game automatically saves at the beginning of each fight. A save keeps the party, character stats, inventories, and enemy lineup. If the party falls, you can reload that checkpoint and retry immediately. You can also load it when starting the game. The single save slot is `savegame.json` in the project root; battles in progress are not saved.
+
 ## Pygame Development
 
 Alongside the terminal version, I began experimenting with a graphical implementation using **Pygame**.
@@ -65,4 +69,4 @@ Possible extensions include:
 - Integrating the terminal combat mechanics into the graphical interface.
 - Expanding enemy decision-making and combat strategies.
 - Implementing additional dungeons, encounters, and boss mechanics.
-- Adding persistent character progression and save/load functionality.
+- Adding persistent character progression.
